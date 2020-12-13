@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.angenin.springboot.dao.EmpDAO">
+
+    <resultMap id="empResult" type="Emp">
+        <id property="id" column="eid"/>
+        <result property="name" column="ename"/>
+        <result property="email" column="eemail"/>
+        <result property="gender" column="egender"/>
+        <result property="dept.id" column="did"/>
+        <result property="dept.name" column="dname"/>
+        <result property="birth" column="ebirth"/>
+    </resultMap>
+
+    <select id="getAll" resultMap="empResult">
+        select e.id as eid, e.name as ename, e.email as eemail, e.gender as egender,
+        d.id as did, d.name as dname, e.birth as ebirth
+        from emp as e, dept as d
+        where e.dept_id = d.id;
+    </select>
+
+    <select id="getEmpById" resultMap="empResult">
+        select e.id as eid, e.name as ename, e.email as eemail, e.gender as egender,
+        d.id as did, d.name as dname, e.birth as ebirth
+        from emp as e, dept as d
+        where e.id=#{id} and e.dept_id = d.id limit 1;
+    </select>
+
+    <insert id="save" parameterType="map">
+        insert into emp(name,email,gender,dept_id,birth)
+        values(#{name}, #{email}, #{gender}, #{dId}, #{birth});
+    </insert>
+
+    <update id="update" parameterType="map">
+        <if test="id != null">
+            update emp
+            <set>
+                <if test="name != null">name=#{name},</if>
+                <if test="email != null">email=#{email},</if>
+                <if test="gender != null">gender=#{gender},</if>
+                <if test="dId != null">dept_id=#{dId},</if>
+                <if test="birth != null">birth=#{birth}</if>
+            </set>
+            where id=#{id} limit 1;
+        </if>
+    </update>
+
+    <delete id="deleteEmpById" parameterType="integer">
+        delete from emp where id=#{id} limit 1;
+    </delete>
+
+</mapper>
